@@ -14,7 +14,7 @@ impl Shapes {
     /// `Self::size` is first set to 1.
     /// 
     /// ```
-    /// use atris::figure::shapes::{Shape,Shapes};
+    /// use atris::figure::shape::{Shape,Shapes};
     /// use atris::figure::algebra::Vector;
     /// 
     /// let mut s = Shapes::new();
@@ -28,7 +28,7 @@ impl Shapes {
     /// Returns current maximum `size` generated so far.
     /// 
     /// ```
-    /// use atris::figure::shapes::{Shape,Shapes};
+    /// use atris::figure::shape::{Shape,Shapes};
     /// use atris::figure::algebra::Vector;
     /// 
     /// let mut s = Shapes::new();
@@ -51,7 +51,7 @@ impl Shapes {
     /// Needed to run `Self::shapes(sz)` for any `sz` between current `Self::size` and `size`
     /// 
     /// ```
-    /// use atris::figure::shapes::{Shape,Shapes};
+    /// use atris::figure::shape::{Shape,Shapes};
     /// use atris::figure::algebra::Vector;
     /// 
     /// let mut s = Shapes::new();

@@ -1,11 +1,11 @@
 pub mod algebra;
-pub mod shapes;
+pub mod shape;
 
 use std::iter::{zip, Zip};
 
 use crate::block::{Block, BlockType};
 use algebra::IVector;
-use shapes::Shape;
+use shape::Shape;
 
 use rand::{thread_rng, Rng};
 
@@ -21,7 +21,7 @@ impl Figure {
     /// 
     /// ```
 	/// use atris::block::BlockType;
-	/// use atris::figure::{shapes::Shapes, Figure};
+	/// use atris::figure::{shape::Shapes, Figure};
     /// let mut shapes = Shapes::new();
     /// shapes.gen_until(4);
     /// let shapes4 = shapes.shapes(4);
@@ -38,7 +38,7 @@ impl Figure {
     /// 
     /// ```
 	/// use atris::block::BlockType;
-	/// use atris::figure::{shapes::Shapes, Figure};
+	/// use atris::figure::{shape::Shapes, Figure};
     /// let mut shapes = Shapes::new();
     /// shapes.gen_until(4);
     /// let shapes4 = shapes.shapes(4);

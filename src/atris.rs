@@ -1,7 +1,7 @@
 pub mod figure;
 pub mod block;
 
-use figure::shapes::Shapes;
+use figure::shape::Shapes;
 
 pub struct Atris {
     pub shapes: Shapes,
