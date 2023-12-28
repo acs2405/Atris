@@ -1,0 +1,19 @@
+[package]
+name = "atris-base"
+version = "0.1.0"
+edition = "2021"
+authors = ["adro"]
+description = "Atris game physics"
+
+[lib]
+name = "atris"         # The name of the target.
+path = "src/atris.rs"  # The source file of the target.
+#test = true            # Is tested by default.
+#doctest = true         # Documentation examples are tested by default.
+#bench = true           # Is benchmarked by default.
+doc = true             # Is documented by default.
+#harness = true         # Use libtest harness.
+crate-type = ["lib"]   # The crate types to generate
+
+[dependencies]
+rand = "0.8.5"
