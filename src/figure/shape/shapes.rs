@@ -1,28 +1,37 @@
 use crate::figure::algebra::Vector;
 use super::Shape;
 
+use rand::{rngs::ThreadRng, Rng};
+
 /// An instance of Shapes can be used to generate all possible shapes of a figure with `n` blocks.
 /// This is useful to generate figures with random shapes knowing their `size`.
 #[derive(Debug)]
-pub struct Shapes {
+pub struct Shapes<'r> {
     size: usize,
     shapess: Vec<Vec<Shape>>,
+    rng: &'r mut ThreadRng,
 }
 
-impl Shapes {
+impl<'r> Shapes<'r> {
     /// Creates a list with the list of all possible shapes of `size` 1 (just one shape with just one point: origin).
     /// `Self::size` is first set to 1.
     /// 
     /// ```
     /// use atris::figure::shape::{Shape,Shapes};
     /// use atris::figure::algebra::Vector;
+    /// use rand::thread_rng;
     /// 
-    /// let mut s = Shapes::new();
+    /// let mut rng = thread_rng();
+    /// let mut s = Shapes::new(&mut rng);
     /// assert_eq!(s.max_size(), 1);
     /// assert_eq!(s.shapes(1), &vec!(Shape::unit()));
     /// ```
-    pub fn new() -> Self {
-        Self { size: 1, shapess: vec!(vec!(Shape::unit())) }
+    pub fn new(rng: &'r mut ThreadRng) -> Self {
+        Self {
+            size: 1,
+            shapess: vec!(vec!(Shape::unit())),
+            rng: rng,
+        }
     }
 
     /// Returns current maximum `size` generated so far.
@@ -30,8 +39,10 @@ impl Shapes {
     /// ```
     /// use atris::figure::shape::{Shape,Shapes};
     /// use atris::figure::algebra::Vector;
+    /// use rand::thread_rng;
     /// 
-    /// let mut s = Shapes::new();
+    /// let mut rng = thread_rng();
+    /// let mut s = Shapes::new(&mut rng);
     /// assert_eq!(s.max_size(), 1);
     /// s.gen_until(3);
     /// assert_eq!(s.max_size(), 3);
@@ -43,8 +54,30 @@ impl Shapes {
     /// Returns the list of all possible shapes for some `size`.
     /// Needs to have run `Self::gen_until(n)` before, where `n` >= `size`, or this method will panic.
     pub fn shapes(&self, size: usize) -> &Vec<Shape> {
-        //self.gen_until(size);
         &self.shapess[size-1]
+    }
+    
+    /// Constructs a new random `Shape` with `size` points. The `Shape` is randomly rotated.
+    /// 
+    /// ```
+	/// use atris::block::BlockType;
+	/// use atris::figure::shape::Shapes;
+    /// use rand::thread_rng;
+    /// 
+    /// let mut rng = thread_rng();
+    /// let mut s = Shapes::new(&mut rng);
+    /// s.gen_until(4);
+    /// let fig1 = s.random_shape(4);
+    /// let fig2 = s.random_shape(4);
+    /// assert_eq!(fig1.size(), 4);
+    /// assert_eq!(fig1.size(), 4);
+    /// ```
+    pub fn random_shape(&mut self, size: usize) -> Shape {
+        let shapes = self.shapes(size).clone();
+        let i: usize = self.rng.gen_range(0..shapes.len());
+        let shape = shapes.get(i).unwrap().clone();
+        let angle: i32 = self.rng.gen_range(0..4);
+        shape.rotated(angle)
     }
 
     /// Generates all the possible shapes from current `Self::size` to `size` contiguous blocks and sets `Self::size` to `size`.
@@ -53,13 +86,15 @@ impl Shapes {
     /// ```
     /// use atris::figure::shape::{Shape,Shapes};
     /// use atris::figure::algebra::Vector;
+    /// use rand::thread_rng;
     /// 
-    /// let mut s = Shapes::new();
+    /// let mut rng = thread_rng();
+    /// let mut s = Shapes::new(&mut rng);
     /// s.gen_until(4);
     /// assert_eq!(s.shapes(1), &vec!(Shape::unit()));
     /// assert_eq!(s.shapes(2), &vec!(Shape::from_iter([Vector(0,0), Vector(0,1)])));
     /// assert_eq!(s.shapes(3), &vec!(
-    ///     Shape::from_iter([Vector(0,0), Vector(0,1), Vector(1,0)]), // Angle
+    ///     Shape::from_iter([Vector(0,0), Vector(0,1), Vector(1,0)]), // Angled
     ///     Shape::from_iter([Vector(-1,0), Vector(0,0), Vector(1,0)]) // Straight
     /// ));
     /// assert_eq!(s.shapes(4).len(), 7); // All 7 possible
@@ -87,7 +122,7 @@ impl Shapes {
                         let mut shape = last_shape.clone();
                         shape.add_pos(p2);
                         if !shapes.contains(&shape) {
-                            shapes.push(shape);
+                            shapes.push(shape.centered());
                         }
                     }
                 }

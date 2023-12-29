@@ -2,63 +2,50 @@ pub mod algebra;
 pub mod shape;
 
 use std::iter::{zip, Zip};
+// use core::any::Any;
 
 use crate::block::{Block, BlockType};
 use algebra::IVector;
 use shape::Shape;
 
-use rand::{thread_rng, Rng};
-
 #[derive(Clone, Debug)]
-pub struct Figure {
-    blocks: Vec<Block>,
+pub struct Figure<'bt> {
+    blocks: Vec<Block<'bt>>,
     shape: Shape,
     // rotation: IVector,
 }
 
-impl Figure {
-    /// Constructs a new Figure from the type of all its blocks and the possible shapes to choose a random one from.
+impl<'bt> Figure<'bt> {
+    /// Constructs a new Figure from a (borrowed) `BlockType` and a `Shape`. All the blocks will have the same type.
     /// 
     /// ```
 	/// use atris::block::BlockType;
 	/// use atris::figure::{shape::Shapes, Figure};
-    /// let mut shapes = Shapes::new();
-    /// shapes.gen_until(4);
-    /// let shapes4 = shapes.shapes(4);
-    /// let fig1 = Figure::random_uniform(BlockType::Standard, &shapes4);
-    /// let fig2 = Figure::random_uniform(BlockType::Standard, &shapes4);
-    /// ```
-    pub fn random_uniform(t: BlockType, shapes: &Vec<Shape>) -> Self {
-        let mut rng = thread_rng();
-        let i: usize = rng.gen_range(0..shapes.len());
-        Self::uniform(t, &shapes[i])
-    }
-    
-    /// Constructs a new Figure from the type of all its blocks and the shape of the figure.
+    /// use atris::block::blocktype::*;
+    /// use rand::thread_rng;
     /// 
-    /// ```
-	/// use atris::block::BlockType;
-	/// use atris::figure::{shape::Shapes, Figure};
-    /// let mut shapes = Shapes::new();
+    /// let mut rng = thread_rng();
+    /// let mut shapes = Shapes::new(&mut rng);
     /// shapes.gen_until(4);
-    /// let shapes4 = shapes.shapes(4);
-    /// let fig1 = Figure::uniform(BlockType::Standard, &shapes4[2]);
-    /// let fig2 = Figure::uniform(BlockType::Standard, &shapes4[5]);
+    /// let bt = standard::StandardType{};
+    /// let fig1 = Figure::uniform(&bt, shapes.random_shape(4));
+    /// let fig2 = Figure::uniform(&bt, shapes.random_shape(4));
     /// ```
-    pub fn uniform(t: BlockType, shape: &Shape) -> Self {
+    pub fn uniform(t: &'bt dyn BlockType, shape: Shape) -> Self {
         let mut blocks = Vec::new();
         blocks.resize(shape.positions().len(), Block::new(t));
         Self {
             blocks: blocks,
-            shape: shape.clone(),
+            shape: shape,
             // rotation: Default::default(),
         }
     }
 }
 
-impl IntoIterator for Figure {
-    type Item = (Block, IVector);
-    type IntoIter = <Zip<<Vec<Block> as IntoIterator>::IntoIter, <Vec<IVector> as IntoIterator>::IntoIter> as IntoIterator>::IntoIter;
+impl<'bt> IntoIterator for Figure<'bt> {
+    type Item = (Block<'bt>, IVector);
+    type IntoIter = <Zip<<Vec<Block<'bt>> as IntoIterator>::IntoIter, <Vec<IVector> as IntoIterator>::IntoIter> as IntoIterator>::IntoIter;
 
+    /// Returns an iterator over tuples made by `Block` and point (in `Shape`).
     fn into_iter(self) -> Self::IntoIter {zip(self.blocks, self.shape)}
 }

@@ -1,4 +1,4 @@
-use std::ops::{Add, Sub};
+use std::ops::{Add, Sub, Neg, Mul, Div};
 use std::cmp::Ordering;
 
 pub type IVector = Vector<i32>;
@@ -84,7 +84,7 @@ impl Ord for Vector<i32> {
 }
 
 impl<T> Add<Self> for Vector<T>
-	where T : Add, T::Output: Into<T> {
+	where T : Add<Output=T> {
 	type Output = Self;
 	/// Sums two vectors.
 	///
@@ -102,12 +102,12 @@ impl<T> Add<Self> for Vector<T>
 	fn add(self, rhs: Self) -> Self::Output {
 		let x = self.0 + rhs.0;
 		let y = self.1 + rhs.1;
-		Self(x.into(), y.into())
+		Self(x, y)
 	}
 }
 
 impl<T> Sub<Self> for Vector<T>
-	where T : Sub, T::Output: Into<T> {
+	where T : Sub<Output=T> {
 	type Output = Self;
 	/// Substracts two vectors.
 	///
@@ -125,6 +125,47 @@ impl<T> Sub<Self> for Vector<T>
 	fn sub(self, rhs: Self) -> Self::Output {
 		let x = self.0 - rhs.0;
 		let y = self.1 - rhs.1;
-		Self(x.into(), y.into())
+		Self(x, y)
+	}
+}
+
+impl<T> Neg for Vector<T>
+	where T : Neg<Output=T> {
+	type Output = Self;
+	/// Negates a vector.
+	///
+	/// ```
+	/// use atris::figure::algebra::Vector;
+	/// let v1 = Vector(0, 9);
+	/// let v2 = Vector(5, -3);
+	/// assert_eq!(-v1, Vector(0, -9));
+	/// assert_eq!(-v2, Vector(-5, 3));
+	/// assert_eq!(-(-v1), v1);
+	/// assert_eq!(-(-v2), v2);
+	/// ```
+	fn neg(self) -> Self::Output {
+		Self(-self.0, -self.1)
+	}
+}
+
+impl<T> Mul<T> for Vector<T>
+	where T : Mul<Output=T> + Copy {
+	type Output = Self;
+	/// Multiplies a vector by a number.
+	fn mul(self, rhs: T) -> Self::Output {
+		let x = self.0 * rhs;
+		let y = self.1 * rhs;
+		Self(x, y)
+	}
+}
+
+impl<T> Div<T> for Vector<T>
+	where T : Div<Output=T> + Copy {
+	type Output = Self;
+	/// Divides a vector by a number.
+	fn div(self, rhs: T) -> Self::Output {
+		let x = self.0 / rhs;
+		let y = self.1 / rhs;
+		Self(x, y)
 	}
 }

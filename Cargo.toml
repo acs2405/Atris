@@ -17,3 +17,4 @@ crate-type = ["lib"]   # The crate types to generate
 
 [dependencies]
 rand = "0.8.5"
+num = "0.4.1"

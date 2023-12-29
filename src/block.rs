@@ -1,6 +1,14 @@
-// use crate::figure::algebra::IVector;
+pub mod state;
+pub mod blocktype;
 
-pub type Cell = Option<Block>;
+// use std::rc::Rc;
+// use core::any::Any;
+
+// use crate::figure::algebra::IVector;
+pub use state::{State, BitRange};
+pub use blocktype::BlockType;
+
+// pub type Cell = Option<Block>;
 
 // #[derive(Debug)]
 // pub struct PositionedBlock {
@@ -9,25 +17,17 @@ pub type Cell = Option<Block>;
 // }
 
 #[derive(Clone, Debug)]
-pub struct Block {
-    pub btype: BlockType, //Múltiples tipos? (hielo ardiendo)
+pub struct Block<'bt> {
+    // Convertir a referencia
+    block_type: &'bt dyn BlockType, //Múltiples tipos? (hielo ardiendo)
+    pub state: State<u64>,
 }
 
-impl Block {
-    pub fn new(t: BlockType) -> Self {
-        Self { btype: t }
+impl<'bt> Block<'bt> {
+    pub fn new(t: &'bt dyn BlockType) -> Self {
+        Self { block_type: t, state: State::default() }
     }
-}
-
-#[derive(Clone, Debug)]
-pub enum BlockType {
-    Standard,
-    Rock,
-    Gravity,
-    Ice,
-    Fire,
-}
-
-impl Default for BlockType {
-    fn default() -> Self {Self::Standard}
+    pub fn get_type(&self) -> &'bt dyn BlockType {
+        self.block_type
+    }
 }
