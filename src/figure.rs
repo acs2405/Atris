@@ -5,14 +5,14 @@ use std::iter::{zip, Zip};
 // use core::any::Any;
 
 use crate::block::{Block, BlockType};
-use algebra::IVector;
+use algebra::{Vector, IVector};
 use shape::Shape;
 
 #[derive(Clone, Debug)]
 pub struct Figure<'bt> {
     blocks: Vec<Block<'bt>>,
     shape: Shape,
-    // rotation: IVector,
+    pub position: IVector,
 }
 
 impl<'bt> Figure<'bt> {
@@ -25,11 +25,11 @@ impl<'bt> Figure<'bt> {
     /// use rand::thread_rng;
     /// 
     /// let mut rng = thread_rng();
-    /// let mut shapes = Shapes::new(&mut rng);
+    /// let mut shapes = Shapes::new();
     /// shapes.gen_until(4);
     /// let bt = standard::StandardType{};
-    /// let fig1 = Figure::uniform(&bt, shapes.random_shape(4));
-    /// let fig2 = Figure::uniform(&bt, shapes.random_shape(4));
+    /// let fig1 = Figure::uniform(&bt, shapes.random_shape(4, &mut rng));
+    /// let fig2 = Figure::uniform(&bt, shapes.random_shape(4, &mut rng));
     /// ```
     pub fn uniform(t: &'bt dyn BlockType, shape: Shape) -> Self {
         let mut blocks = Vec::new();
@@ -37,8 +37,20 @@ impl<'bt> Figure<'bt> {
         Self {
             blocks: blocks,
             shape: shape,
-            // rotation: Default::default(),
+            position: Vector::default(),
         }
+    }
+
+    pub fn blocks(&self) -> &Vec<Block<'bt>> { &self.blocks }
+
+    pub fn shape(&self) -> &Shape { &self.shape }
+
+    // pub fn position_of(&self, offset: IVector) -> IVector {
+    //     self.position + offset
+    // }
+
+    pub fn iter(&self) -> Zip<std::slice::Iter<'_, Block<'bt>>, std::slice::Iter<'_, IVector>> {
+        zip(self.blocks.iter(), self.shape.iter())
     }
 }
 

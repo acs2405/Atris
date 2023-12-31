@@ -73,9 +73,17 @@ impl Shape {
         bounds
     }
 
+    /// Returns the number of points in the `Shape`.
     pub fn size(&self) -> usize { self.positions.len() }
 
+    /// Returns an inmutable reference to the inner `Vec` of points.
     pub fn positions(&self) -> &Vec<IVector> { &self.positions }
+
+    /// Returns an inmutable iterator over the inner points.
+    pub fn iter(&self) -> std::slice::Iter<'_, IVector> { self.positions.iter() }
+
+    /// Returns a mutable iterator over the inner points.
+    pub fn iter_mut(&mut self) -> std::slice::IterMut<'_, IVector> { self.positions.iter_mut() }
 }
 
 impl Add<IVector> for Shape {

@@ -1,21 +1,20 @@
-pub mod figure;
 pub mod block;
+pub mod figure;
+pub mod grid;
 
-// use figure::shape::Shapes;
-use rand::rngs::ThreadRng;
+use figure::shape::Shapes;
+use rand::{rngs::ThreadRng, thread_rng};
 
 pub struct Atris {
     pub rng: ThreadRng,
-    // pub shapes: Result<Shapes<'static>, String>,
+    pub shapes: Shapes,
 }
 
 impl Atris {
-    // pub fn new() -> Self {
-    //     let mut atris = Self {
-    //         rng: thread_rng(),
-    //         shapes: Err(String::from("Not initialized yet")),
-    //     };
-    //     atris.shapes = Ok(Shapes::new(&atris.rng));
-    //     atris
-    // }
+    pub fn new() -> Self {
+        Self {
+            rng: thread_rng(),
+            shapes: Shapes::new(),
+        }
+    }
 }

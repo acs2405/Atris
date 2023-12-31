@@ -6,13 +6,13 @@ use rand::{rngs::ThreadRng, Rng};
 /// An instance of Shapes can be used to generate all possible shapes of a figure with `n` blocks.
 /// This is useful to generate figures with random shapes knowing their `size`.
 #[derive(Debug)]
-pub struct Shapes<'r> {
+pub struct Shapes {
     size: usize,
     shapess: Vec<Vec<Shape>>,
-    rng: &'r mut ThreadRng,
+    // rng: &'r mut ThreadRng,
 }
 
-impl<'r> Shapes<'r> {
+impl Shapes {
     /// Creates a list with the list of all possible shapes of `size` 1 (just one shape with just one point: origin).
     /// `Self::size` is first set to 1.
     /// 
@@ -21,16 +21,15 @@ impl<'r> Shapes<'r> {
     /// use atris::figure::algebra::Vector;
     /// use rand::thread_rng;
     /// 
-    /// let mut rng = thread_rng();
-    /// let mut s = Shapes::new(&mut rng);
+    /// let mut s = Shapes::new();
     /// assert_eq!(s.max_size(), 1);
     /// assert_eq!(s.shapes(1), &vec!(Shape::unit()));
     /// ```
-    pub fn new(rng: &'r mut ThreadRng) -> Self {
+    pub fn new() -> Self { //(rng: &'r mut ThreadRng) -> Self {
         Self {
             size: 1,
             shapess: vec!(vec!(Shape::unit())),
-            rng: rng,
+            // rng: rng,
         }
     }
 
@@ -41,8 +40,7 @@ impl<'r> Shapes<'r> {
     /// use atris::figure::algebra::Vector;
     /// use rand::thread_rng;
     /// 
-    /// let mut rng = thread_rng();
-    /// let mut s = Shapes::new(&mut rng);
+    /// let mut s = Shapes::new();
     /// assert_eq!(s.max_size(), 1);
     /// s.gen_until(3);
     /// assert_eq!(s.max_size(), 3);
@@ -65,18 +63,18 @@ impl<'r> Shapes<'r> {
     /// use rand::thread_rng;
     /// 
     /// let mut rng = thread_rng();
-    /// let mut s = Shapes::new(&mut rng);
+    /// let mut s = Shapes::new();
     /// s.gen_until(4);
-    /// let fig1 = s.random_shape(4);
-    /// let fig2 = s.random_shape(4);
+    /// let fig1 = s.random_shape(4, &mut rng);
+    /// let fig2 = s.random_shape(4, &mut rng);
     /// assert_eq!(fig1.size(), 4);
     /// assert_eq!(fig1.size(), 4);
     /// ```
-    pub fn random_shape(&mut self, size: usize) -> Shape {
+    pub fn random_shape(&mut self, size: usize, rng: &mut ThreadRng) -> Shape {
         let shapes = self.shapes(size).clone();
-        let i: usize = self.rng.gen_range(0..shapes.len());
+        let i: usize = rng.gen_range(0..shapes.len());
         let shape = shapes.get(i).unwrap().clone();
-        let angle: i32 = self.rng.gen_range(0..4);
+        let angle: i32 = rng.gen_range(0..4);
         shape.rotated(angle)
     }
 
@@ -88,8 +86,7 @@ impl<'r> Shapes<'r> {
     /// use atris::figure::algebra::Vector;
     /// use rand::thread_rng;
     /// 
-    /// let mut rng = thread_rng();
-    /// let mut s = Shapes::new(&mut rng);
+    /// let mut s = Shapes::new();
     /// s.gen_until(4);
     /// assert_eq!(s.shapes(1), &vec!(Shape::unit()));
     /// assert_eq!(s.shapes(2), &vec!(Shape::from_iter([Vector(0,0), Vector(0,1)])));
