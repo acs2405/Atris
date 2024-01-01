@@ -1,14 +1,11 @@
-pub mod state;
-pub mod blocktype;
-
 // use std::rc::Rc;
 // use core::any::Any;
 
 use std::cmp::Ordering;
 
 // use crate::figure::algebra::IVector;
-pub use state::{State, BitRange};
-pub use blocktype::BlockType;
+pub use super::state::{State, BitRange};
+pub use super::blocktype::BlockType;
 
 use crate::figure::algebra::UVector;
 

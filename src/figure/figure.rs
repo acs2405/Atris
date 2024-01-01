@@ -1,12 +1,9 @@
-pub mod algebra;
-pub mod shape;
-
 use std::iter::{zip, Zip};
 // use core::any::Any;
 
 use crate::block::{Block, BlockType};
-use algebra::{Vector, IVector};
-use shape::Shape;
+use super::algebra::{Vector, IVector};
+use super::shape::Shape;
 
 #[derive(Clone, Debug)]
 pub struct Figure<'bt> {
@@ -21,15 +18,15 @@ impl<'bt> Figure<'bt> {
     /// ```
 	/// use atris::block::BlockType;
 	/// use atris::figure::{shape::Shapes, Figure};
-    /// use atris::block::blocktype::*;
+    /// use atris::block::blocktypes::*;
     /// use rand::thread_rng;
     /// 
     /// let mut rng = thread_rng();
     /// let mut shapes = Shapes::new();
     /// shapes.gen_until(4);
     /// let bt = standard::StandardType{};
-    /// let fig1 = Figure::uniform(&bt, shapes.random_shape(4, &mut rng));
-    /// let fig2 = Figure::uniform(&bt, shapes.random_shape(4, &mut rng));
+    /// let fig1 = Figure::uniform(&bt, shapes.random(4, &mut rng));
+    /// let fig2 = Figure::uniform(&bt, shapes.random(4, &mut rng));
     /// ```
     pub fn uniform(t: &'bt dyn BlockType, shape: Shape) -> Self {
         let mut blocks = Vec::new();

@@ -3,6 +3,7 @@ use std::cmp::Ordering;
 
 pub type IVector = Vector<i32>;
 pub type UVector = Vector<usize>;
+pub type FVector = Vector<f64>;
 
 /// 2D generic vector (horizontal, vertical). It's implemented just for T=i32
 #[derive(Default, Hash, Copy, Clone, Debug)]
@@ -53,10 +54,10 @@ where T: Copy,
 	}
 }
 
-impl<T> PartialEq for Vector<T>
-where T: PartialEq {
+impl<T, U> PartialEq<Vector<T>> for Vector<U>
+where U: PartialEq<T> {
 	/// Partially checks whether two vectors are equal.
-	fn eq(&self, rhs: &Self) -> bool {
+	fn eq(&self, rhs: &Vector<T>) -> bool {
 		self.0.eq(&rhs.0) && self.1.eq(&rhs.1)
 	}
 }
@@ -64,8 +65,8 @@ where T: PartialEq {
 impl<T> Eq for Vector<T>
 where T: Eq {}
 
-impl<T> PartialOrd for Vector<T>
-where T: PartialOrd {
+impl<T, U> PartialOrd<Vector<T>> for Vector<U>
+where U: PartialOrd<T> {
 	/// Partially compares two vectors.
 	///
 	/// ```
@@ -86,7 +87,7 @@ where T: PartialOrd {
 	/// assert_eq!(v3a.partial_cmp(&v3b), Some(Ordering::Equal));
 	/// assert_eq!(v3a == v3b, true);
 	/// ```
-	fn partial_cmp(&self, rhs: &Self) -> Option<Ordering> {
+	fn partial_cmp(&self, rhs: &Vector<T>) -> Option<Ordering> {
 		let cmp = self.0.partial_cmp(&rhs.0)?;
 		if cmp.is_ne() {Some(cmp)} else {self.1.partial_cmp(&rhs.1)}
 	}
@@ -216,6 +217,18 @@ impl<T, U> From<(Vector<T>,)> for Vector<U>
 where U: From<T> {
     fn from(v: (Vector<T>,)) -> Self {
         Self(v.0.0.into(), v.0.1.into())
+    }
+}
+
+impl From<Vector<i32>> for Vector<f64> {
+    fn from(v: Vector<i32>) -> Self {
+        Self(v.0.into(), v.1.into())
+    }
+}
+
+impl From<Vector<f64>> for Vector<i32> {
+    fn from(v: Vector<f64>) -> Self {
+        unsafe { Self(v.0.to_int_unchecked(), v.1.to_int_unchecked()) }
     }
 }
 

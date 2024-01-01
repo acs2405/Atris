@@ -1,4 +1,4 @@
-use super::BlockType;
+use crate::block::BlockType;
 // use crate::block::Block;
 // use crate::block::BitRange;
 

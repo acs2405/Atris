@@ -1,4 +1,4 @@
-use super::BlockType;
+use crate::block::BlockType;
 // use crate::block::BitRange;
 
 #[derive(Debug)]

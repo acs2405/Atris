@@ -55,6 +55,28 @@ impl Shapes {
         &self.shapess[size-1]
     }
     
+    /// Constructs a new random `Shape` within a given list of shapes. The returned `Shape` is randomly rotated.
+    /// 
+    /// ```
+	/// use atris::block::BlockType;
+	/// use atris::figure::shape::Shapes;
+    /// use rand::thread_rng;
+    /// 
+    /// let mut rng = thread_rng();
+    /// let mut s = Shapes::new();
+    /// s.gen_until(3);
+    /// let shapes = &s.shapes(3)[0..2];
+    /// let fig1 = s.random_among(&shapes, &mut rng);
+    /// assert_eq!(fig1.size(), 3);
+    /// assert!(shapes.contains(&fig1));
+    /// ```
+    pub fn random_among(&self, shapes: &[Shape], rng: &mut ThreadRng) -> Shape {
+        let i: usize = rng.gen_range(0..shapes.len());
+        let shape = shapes.get(i).unwrap().clone();
+        let angle: i32 = rng.gen_range(0..4);
+        shape.rotated(angle)
+    }
+
     /// Constructs a new random `Shape` with `size` points. The `Shape` is randomly rotated.
     /// 
     /// ```
@@ -65,17 +87,13 @@ impl Shapes {
     /// let mut rng = thread_rng();
     /// let mut s = Shapes::new();
     /// s.gen_until(4);
-    /// let fig1 = s.random_shape(4, &mut rng);
-    /// let fig2 = s.random_shape(4, &mut rng);
+    /// let fig1 = s.random(4, &mut rng);
+    /// let fig2 = s.random(4, &mut rng);
     /// assert_eq!(fig1.size(), 4);
     /// assert_eq!(fig1.size(), 4);
     /// ```
-    pub fn random_shape(&mut self, size: usize, rng: &mut ThreadRng) -> Shape {
-        let shapes = self.shapes(size).clone();
-        let i: usize = rng.gen_range(0..shapes.len());
-        let shape = shapes.get(i).unwrap().clone();
-        let angle: i32 = rng.gen_range(0..4);
-        shape.rotated(angle)
+    pub fn random(&self, size: usize, rng: &mut ThreadRng) -> Shape {
+        self.random_among(self.shapes(size), rng)
     }
 
     /// Generates all the possible shapes from current `Self::size` to `size` contiguous blocks and sets `Self::size` to `size`.

@@ -61,6 +61,12 @@ impl Shape {
         bounds.0 + (bounds.1 - bounds.0) / 2
     }
 
+    /// Returns the exact center point of the `Shape` object.
+    pub fn f64_center(&self) -> Vector<f64> {
+        let bounds = self.bounds();
+        <Vector<f64>>::from(bounds.0 + (bounds.1 - bounds.0)) / 2.0
+    }
+
     /// Returns the bounds of the `Shape` object as a two-`Vector<i32>` tuple: the minimum coordinates and the maximum coordinates.
     pub fn bounds(&self) -> (IVector, IVector) {
         let mut bounds = (Vector(0,0), Vector(0,0));

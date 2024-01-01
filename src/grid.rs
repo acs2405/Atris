@@ -2,7 +2,7 @@
 use std::ops::{Index, IndexMut};
 
 use crate::block::{Block, PositionedBlock};
-use crate::figure::algebra::{Vector, UVector, IVector};
+use crate::figure::algebra::{Vector, UVector, IVector, FVector};
 use crate::figure::{Figure, shape::Shapes};
 
 #[derive(Debug)]
@@ -63,17 +63,25 @@ impl<'bt> Grid<'bt> {
 
     pub fn figure_pos_correction(&self, fig: Figure<'bt>, x_offset: i32, angle: i32) -> Option<IVector> {
         let offset = Vector(x_offset, 0);
+        let rot_shape = fig.shape().rotated(angle);
+        let fig_center = <FVector>::from(fig.position) + rot_shape.f64_center();
         let mut correction = Vector(0i32, 0i32);
-        for &p in fig.shape().rotated(angle).iter() {
+        for &p in rot_shape.iter() {
             let pos = fig.position + p + offset;
-            let corr: IVector = self.pos_correction(pos)?;
+            let corr: IVector = self.pos_correction(pos, fig_center)?;
             // Check that one correction does not contradict others:
             if corr.0 != 0 && correction.0.signum() == -corr.0.signum() { //) ||
                 // (corr.1 != 0 && correction.1.signum() == -corr.1.signum()) {
                 return None;
             }
-            correction.0 += corr.0;
-            // correction = correction + corr;
+            if corr.0.abs() > correction.0.abs() {
+                correction.0 = corr.0;
+            }
+        };
+        for &p in rot_shape.iter() {
+            if !self.pos_available(p + correction) {
+                return None;
+            }
         };
         Some(correction)
     }
@@ -91,16 +99,21 @@ impl<'bt> Grid<'bt> {
         (0..self.n_cols() as i32).contains(&pos.0) && (0..self.n_rows() as i32).contains(&pos.1)
     }
     
-    pub fn pos_correction(&self, pos: IVector) -> Option<IVector> {
+    pub fn pos_correction(&self, pos: IVector, figure_center: FVector) -> Option<IVector> {
+        let d_sign = (figure_center.0 - pos.0 as f64).signum();
         let mut correction = Vector(0, 0);
         if pos.0 < 0 {correction.0 = -pos.0}
         else if pos.0 >= self.n_cols() as i32 {correction.0 = pos.0 - self.n_cols() as i32 - 1};
         // if pos.1 < 0 {correction.1 = -pos.1}
         // else if pos.1 >= self.n_rows() as i32 {correction.1 = pos.1 - self.n_rows() as i32 - 1};
-        if self.pos_overlaps(pos + correction) {
-            // TODO: take into account the center of the figure to move towards it when overlapping
-            return None;
-        };
+        if d_sign != 0.0 {
+            while self.pos_overlaps(pos + correction) {
+                correction.0 += if d_sign > 0.0 {1} else {-1};
+                if !self.pos_in_bounds(pos + correction) {
+                    return None;
+                }
+            };
+        }
         Some(correction)
     }
 
@@ -114,16 +127,44 @@ impl<'bt> Grid<'bt> {
         full_rows
     }
 
+    pub fn delete_empty_rows(&mut self) -> Vec<usize> {
+        let empty_rows = self.empty_rows();
+        let mut new_rows = Vec::new();
+        for i in 0..self.n_rows() {
+            if !empty_rows.contains(&i) {
+                new_rows.push(self.rows[i].clone());
+            }
+        }
+        for _i in new_rows.len()..self.n_rows() {
+            let mut row = Vec::new();
+            row.resize(self.n_cols(), None);
+            new_rows.push(row);
+        }
+        self.rows = new_rows;
+        empty_rows
+
+        // for &i in empty_rows.iter() {
+        //     self.rows.remove(i);
+        // }
+        // for _ in empty_rows {
+        //     let mut row = Vec::new();
+        //     row.resize(self.n_cols(), None);
+        //     self.rows.push(row);
+        // }
+    }
+
     pub fn empty_rows(&self) -> Vec<usize> {
         let mut empty_rows = Vec::new();
         let mut all_empty = true;
         for i in self.n_rows()-1..=0 {
             if all_empty {
+                if !self.empty_row(i) {
+                    all_empty = false;
+                }
+            } else {
                 if self.empty_row(i) {
                     empty_rows.push(i);
                 }
-            } else if !self.empty_row(i) {
-                all_empty = false;
             }
         };
         empty_rows

@@ -1,6 +1,8 @@
 pub mod block;
 pub mod figure;
 pub mod grid;
+pub mod gridsession;
+pub mod atrissession;
 
 use figure::shape::Shapes;
 use rand::{rngs::ThreadRng, thread_rng};
