@@ -1,7 +1,7 @@
-use crate::figure::algebra::Vector;
+use crate::algebra::Vector;
 use super::Shape;
 
-use rand::{rngs::ThreadRng, Rng};
+use rand::Rng;
 
 /// An instance of Shapes can be used to generate all possible shapes of a figure with `n` blocks.
 /// This is useful to generate figures with random shapes knowing their `size`.
@@ -17,8 +17,8 @@ impl Shapes {
     /// `Self::size` is first set to 1.
     /// 
     /// ```
-    /// use atris::figure::shape::{Shape,Shapes};
-    /// use atris::figure::algebra::Vector;
+    /// use atris::piece::shape::{Shape,Shapes};
+    /// use atris::algebra::Vector;
     /// use rand::thread_rng;
     /// 
     /// let mut s = Shapes::new();
@@ -36,8 +36,8 @@ impl Shapes {
     /// Returns current maximum `size` generated so far.
     /// 
     /// ```
-    /// use atris::figure::shape::{Shape,Shapes};
-    /// use atris::figure::algebra::Vector;
+    /// use atris::piece::shape::{Shape,Shapes};
+    /// use atris::algebra::Vector;
     /// use rand::thread_rng;
     /// 
     /// let mut s = Shapes::new();
@@ -59,7 +59,7 @@ impl Shapes {
     /// 
     /// ```
 	/// use atris::block::BlockType;
-	/// use atris::figure::shape::Shapes;
+	/// use atris::piece::shape::Shapes;
     /// use rand::thread_rng;
     /// 
     /// let mut rng = thread_rng();
@@ -67,10 +67,10 @@ impl Shapes {
     /// s.gen_until(3);
     /// let shapes = &s.shapes(3)[0..2];
     /// let fig1 = s.random_among(&shapes, &mut rng);
-    /// assert_eq!(fig1.size(), 3);
+    /// assert_eq!(fig1.len(), 3);
     /// assert!(shapes.contains(&fig1));
     /// ```
-    pub fn random_among(&self, shapes: &[Shape], rng: &mut ThreadRng) -> Shape {
+    pub fn random_among<R: Rng>(&self, shapes: &[Shape], rng: &mut R) -> Shape {
         let i: usize = rng.gen_range(0..shapes.len());
         let shape = shapes.get(i).unwrap().clone();
         let angle: i32 = rng.gen_range(0..4);
@@ -81,7 +81,7 @@ impl Shapes {
     /// 
     /// ```
 	/// use atris::block::BlockType;
-	/// use atris::figure::shape::Shapes;
+	/// use atris::piece::shape::Shapes;
     /// use rand::thread_rng;
     /// 
     /// let mut rng = thread_rng();
@@ -89,10 +89,10 @@ impl Shapes {
     /// s.gen_until(4);
     /// let fig1 = s.random(4, &mut rng);
     /// let fig2 = s.random(4, &mut rng);
-    /// assert_eq!(fig1.size(), 4);
-    /// assert_eq!(fig1.size(), 4);
+    /// assert_eq!(fig1.len(), 4);
+    /// assert_eq!(fig1.len(), 4);
     /// ```
-    pub fn random(&self, size: usize, rng: &mut ThreadRng) -> Shape {
+    pub fn random<R: Rng>(&self, size: usize, rng: &mut R) -> Shape {
         self.random_among(self.shapes(size), rng)
     }
 
@@ -100,8 +100,8 @@ impl Shapes {
     /// Needed to run `Self::shapes(sz)` for any `sz` between current `Self::size` and `size`
     /// 
     /// ```
-    /// use atris::figure::shape::{Shape,Shapes};
-    /// use atris::figure::algebra::Vector;
+    /// use atris::piece::shape::{Shape,Shapes};
+    /// use atris::algebra::Vector;
     /// use rand::thread_rng;
     /// 
     /// let mut s = Shapes::new();

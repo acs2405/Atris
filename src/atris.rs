@@ -1,22 +1,24 @@
+pub mod algebra;
 pub mod block;
-pub mod figure;
+pub mod piece;
 pub mod grid;
+pub mod gamemode;
 pub mod gridsession;
 pub mod atrissession;
 
-use figure::shape::Shapes;
+pub mod blocktypes;
+pub mod gamemodes;
+
 use rand::{rngs::ThreadRng, thread_rng};
 
 pub struct Atris {
     pub rng: ThreadRng,
-    pub shapes: Shapes,
 }
 
 impl Atris {
     pub fn new() -> Self {
         Self {
             rng: thread_rng(),
-            shapes: Shapes::new(),
         }
     }
 }

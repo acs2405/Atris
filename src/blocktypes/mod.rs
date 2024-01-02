@@ -1,4 +1,4 @@
-pub mod blocktypes;
+mod blocktypes;
 
 pub mod standard;
 pub mod rock;

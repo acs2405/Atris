@@ -1,32 +1,55 @@
 use std::iter::{zip, Zip};
-// use core::any::Any;
 
 use crate::block::{Block, BlockType};
-use super::algebra::{Vector, IVector};
+use crate::algebra::IVector;
 use super::shape::Shape;
 
 #[derive(Clone, Debug)]
-pub struct Figure<'bt> {
+pub struct Piece<'bt> {
     blocks: Vec<Block<'bt>>,
     shape: Shape,
-    pub position: IVector,
 }
 
-impl<'bt> Figure<'bt> {
-    /// Constructs a new Figure from a (borrowed) `BlockType` and a `Shape`. All the blocks will have the same type.
+impl<'bt> Piece<'bt> {
+    /// Constructs a new Figure from a list of `Block`s and a `Shape`. Both must have the same `len()`.
     /// 
     /// ```
 	/// use atris::block::BlockType;
-	/// use atris::figure::{shape::Shapes, Figure};
-    /// use atris::block::blocktypes::*;
+	/// use atris::piece::{shape::Shapes, Piece};
+    /// use atris::blocktypes::*;
     /// use rand::thread_rng;
     /// 
     /// let mut rng = thread_rng();
     /// let mut shapes = Shapes::new();
     /// shapes.gen_until(4);
     /// let bt = standard::StandardType{};
-    /// let fig1 = Figure::uniform(&bt, shapes.random(4, &mut rng));
-    /// let fig2 = Figure::uniform(&bt, shapes.random(4, &mut rng));
+    /// let fig1 = Piece::uniform(&bt, shapes.random(4, &mut rng));
+    /// let fig2 = Piece::uniform(&bt, shapes.random(4, &mut rng));
+    /// ```
+    pub fn new(blocks: Vec<Block<'bt>>, shape: Shape) -> Self {
+        if blocks.len() != shape.len() {
+            panic!("Creating piece with different number of blocks and points in shape");
+        };
+        Self {
+            blocks: blocks,
+            shape: shape,
+        }
+    }
+
+    /// Constructs a new Figure from a (borrowed) `BlockType` and a `Shape`. All the blocks will have the same type.
+    /// 
+    /// ```
+	/// use atris::block::BlockType;
+	/// use atris::piece::{shape::Shapes, Piece};
+    /// use atris::blocktypes::*;
+    /// use rand::thread_rng;
+    /// 
+    /// let mut rng = thread_rng();
+    /// let mut shapes = Shapes::new();
+    /// shapes.gen_until(4);
+    /// let bt = standard::StandardType{};
+    /// let fig1 = Piece::uniform(&bt, shapes.random(4, &mut rng));
+    /// let fig2 = Piece::uniform(&bt, shapes.random(4, &mut rng));
     /// ```
     pub fn uniform(t: &'bt dyn BlockType, shape: Shape) -> Self {
         let mut blocks = Vec::new();
@@ -34,7 +57,6 @@ impl<'bt> Figure<'bt> {
         Self {
             blocks: blocks,
             shape: shape,
-            position: Vector::default(),
         }
     }
 
@@ -42,16 +64,12 @@ impl<'bt> Figure<'bt> {
 
     pub fn shape(&self) -> &Shape { &self.shape }
 
-    // pub fn position_of(&self, offset: IVector) -> IVector {
-    //     self.position + offset
-    // }
-
     pub fn iter(&self) -> Zip<std::slice::Iter<'_, Block<'bt>>, std::slice::Iter<'_, IVector>> {
         zip(self.blocks.iter(), self.shape.iter())
     }
 }
 
-impl<'bt> IntoIterator for Figure<'bt> {
+impl<'bt> IntoIterator for Piece<'bt> {
     type Item = (Block<'bt>, IVector);
     type IntoIter = <Zip<<Vec<Block<'bt>> as IntoIterator>::IntoIter, <Vec<IVector> as IntoIterator>::IntoIter> as IntoIterator>::IntoIter;
 

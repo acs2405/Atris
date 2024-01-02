@@ -19,3 +19,5 @@ crate-type = ["lib"]   # The crate types to generate
 rand = "0.8.5"
 num = "0.4.1"
 uuid = { version = "1.1.2", features = ["serde", "v4"] }
+futures = { version = "0.3.30", features = ["executor", "thread-pool"] }
+crossbeam = "0.8.3"

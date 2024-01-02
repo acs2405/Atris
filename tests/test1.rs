@@ -1,4 +1,4 @@
-use atris::figure::algebra;
+use atris::algebra;
 
 fn main() {
     let v = algebra::Vector(5, 9);

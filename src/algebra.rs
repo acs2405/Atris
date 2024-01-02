@@ -23,7 +23,7 @@ where T: num::Integer +
 	/// Rotates a vector some angle, where each unit a quarter of a counter-clockwise rotation.
 	///
 	/// ```
-	/// use atris::figure::algebra::Vector;
+	/// use atris::algebra::Vector;
 	/// 
 	/// let v = Vector(5, 9);
 	/// 
@@ -70,7 +70,7 @@ where U: PartialOrd<T> {
 	/// Partially compares two vectors.
 	///
 	/// ```
-	/// use atris::figure::algebra::Vector;
+	/// use atris::algebra::Vector;
 	/// use std::cmp::Ordering;
 	/// 
 	/// let v1 = Vector(5, 3);
@@ -98,7 +98,7 @@ where T: Ord {
 	/// Compares two vectors.
 	///
 	/// ```
-	/// use atris::figure::algebra::Vector;
+	/// use atris::algebra::Vector;
 	/// use std::cmp::Ordering;
 	/// 
 	/// let v1 = Vector(5, 3);
@@ -126,7 +126,7 @@ where T : Add<Output=T> {
 	/// Sums two vectors.
 	///
 	/// ```
-	/// use atris::figure::algebra::Vector;
+	/// use atris::algebra::Vector;
 	/// 
 	/// let v1 = Vector(0, 9);
 	/// let v2 = Vector(5, -3);
@@ -151,7 +151,7 @@ where T : Sub<Output=T> {
 	/// Substracts two vectors.
 	///
 	/// ```
-	/// use atris::figure::algebra::Vector;
+	/// use atris::algebra::Vector;
 	/// 
 	/// let v1 = Vector(0, 9);
 	/// let v2 = Vector(5, -3);
@@ -176,7 +176,7 @@ where T : Neg<Output=T> {
 	/// Negates a vector.
 	///
 	/// ```
-	/// use atris::figure::algebra::Vector;
+	/// use atris::algebra::Vector;
 	/// 
 	/// let v1 = Vector(0, 9);
 	/// let v2 = Vector(5, -3);

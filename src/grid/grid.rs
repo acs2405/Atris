@@ -2,8 +2,8 @@
 use std::ops::{Index, IndexMut};
 
 use crate::block::{Block, PositionedBlock};
-use crate::figure::algebra::{Vector, UVector, IVector, FVector};
-use crate::figure::{Figure, shape::Shapes};
+use crate::algebra::{Vector, UVector, IVector, FVector};
+use super::Figure;
 
 #[derive(Debug)]
 pub struct Grid<'bt> {
@@ -52,7 +52,7 @@ impl<'bt> Grid<'bt> {
 
     pub fn fits_in(&self, fig: &Figure<'bt>, offset: IVector, angle: i32) -> bool {
         // for (b, &p) in fig.iter() { // To exclude ghost blocks
-        for &p in fig.shape().rotated(angle).iter() {
+        for &p in fig.piece().shape().rotated(angle).iter() {
             let pos = fig.position + p + offset;
             if !self.pos_available(pos) {
                 return false;
@@ -63,7 +63,7 @@ impl<'bt> Grid<'bt> {
 
     pub fn figure_pos_correction(&self, fig: Figure<'bt>, x_offset: i32, angle: i32) -> Option<IVector> {
         let offset = Vector(x_offset, 0);
-        let rot_shape = fig.shape().rotated(angle);
+        let rot_shape = fig.piece().shape().rotated(angle);
         let fig_center = <FVector>::from(fig.position) + rot_shape.f64_center();
         let mut correction = Vector(0i32, 0i32);
         for &p in rot_shape.iter() {

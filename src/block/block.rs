@@ -7,7 +7,7 @@ use std::cmp::Ordering;
 pub use super::state::{State, BitRange};
 pub use super::blocktype::BlockType;
 
-use crate::figure::algebra::UVector;
+use crate::algebra::UVector;
 
 // pub type Cell = Option<Block>;
 

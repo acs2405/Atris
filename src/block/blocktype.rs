@@ -5,10 +5,11 @@ use core::fmt::Debug;
 // use super::Block;
 
 /// This `trait` represents the behaviour of every `Block`, depending on the `Block`'s type and state (and global state).
-pub trait BlockType: Debug {
+pub trait BlockType: Sync + Debug {
     // const NAME: str;
     /// Returns the identifier (an unique name) of the `BlockType` object. The value returned must be constant all the time.
     fn id(&self) -> &'static str;
+    // fn preferred_n_blocks() -> Option<usize> { None }
 
     // fn on_create(&self, e: Event);
     // fn on_damage(&self, e: Event);

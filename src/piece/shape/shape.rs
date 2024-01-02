@@ -1,7 +1,7 @@
 use std::iter::zip;
 use std::ops::{Add, Sub, Neg};
 
-use crate::figure::algebra::{Vector, IVector};
+use crate::algebra::{Vector, IVector};
 
 /// Represents a shape os blocks. For example, a `Figure` must have one, so that its blocks are relatively positioned
 /// some specific way.
@@ -80,7 +80,7 @@ impl Shape {
     }
 
     /// Returns the number of points in the `Shape`.
-    pub fn size(&self) -> usize { self.positions.len() }
+    pub fn len(&self) -> usize { self.positions.len() }
 
     /// Returns an inmutable reference to the inner `Vec` of points.
     pub fn positions(&self) -> &Vec<IVector> { &self.positions }
